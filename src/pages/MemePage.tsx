@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { BackgroundLayer } from "@/components/BackgroundLayer";
 import { Header } from "@/sections/Header";
 import { Footer } from "@/sections/Footer";
@@ -14,15 +14,27 @@ export const MemePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
 
+  useEffect(() => {
+    return () => {
+      if (image?.startsWith("blob:")) {
+        URL.revokeObjectURL(image);
+      }
+    };
+  }, [image]);
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (image?.startsWith("blob:")) {
+      URL.revokeObjectURL(image);
+    }
     setImage(null);
 
     try {
-      const result = await generateMeme({ concept, topText, bottomText });
-      setImage(result.image);
+      const imageUrl = await generateMeme({ concept, topText, bottomText });
+      setImage(imageUrl);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate meme");
     } finally {

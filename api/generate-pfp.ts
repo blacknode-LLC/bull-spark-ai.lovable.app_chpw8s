@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { generateImage } from "./_utils/generateImage";
+import { generateImageBuffer } from "./_utils/generateImage";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -19,8 +19,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   ].join(" ");
 
   try {
-    const image = await generateImage(prompt);
-    return res.status(200).json({ image });
+    const imageBuffer = await generateImageBuffer(prompt);
+
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).send(imageBuffer);
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Failed to generate PFP";

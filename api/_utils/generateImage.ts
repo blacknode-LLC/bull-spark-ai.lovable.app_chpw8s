@@ -3,7 +3,7 @@ type OpenAIImageResponse = {
   error?: { message?: string };
 };
 
-export async function generateImage(prompt: string): Promise<string> {
+export async function generateImageBuffer(prompt: string): Promise<Buffer> {
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
@@ -37,11 +37,18 @@ export async function generateImage(prompt: string): Promise<string> {
   const imageData = body.data?.[0];
 
   if (imageData?.b64_json) {
-    return `data:image/png;base64,${imageData.b64_json}`;
+    return Buffer.from(imageData.b64_json, "base64");
   }
 
   if (imageData?.url) {
-    return imageData.url;
+    const imageResponse = await fetch(imageData.url);
+
+    if (!imageResponse.ok) {
+      throw new Error("Failed to download generated image");
+    }
+
+    const arrayBuffer = await imageResponse.arrayBuffer();
+    return Buffer.from(arrayBuffer);
   }
 
   throw new Error("No image returned from OpenAI");
