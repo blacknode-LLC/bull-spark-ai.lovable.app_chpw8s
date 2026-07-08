@@ -1,7 +1,7 @@
 import {
   generateImageBuffer,
   parseJsonBody,
-} from "../lib/openai-image";
+} from "../lib/openai-image.js";
 
 export const config = {
   maxDuration: 300,
