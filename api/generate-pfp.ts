@@ -1,12 +1,31 @@
-import { VercelRequest, VercelResponse } from "@vercel/node";
-import { generateImageBuffer } from "./_utils/generateImage";
+import {
+  generateImageBuffer,
+  parseJsonBody,
+} from "../lib/openai-image";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export const config = {
+  maxDuration: 300,
+};
+
+type ApiRequest = {
+  method?: string;
+  body?: unknown;
+};
+
+type ApiResponse = {
+  status: (code: number) => ApiResponse;
+  json: (body: unknown) => void;
+  setHeader: (name: string, value: string) => void;
+  send: (data: Buffer) => void;
+};
+
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { vibe } = req.body ?? {};
+  const body = parseJsonBody(req.body);
+  const vibe = body.vibe;
 
   if (!vibe || typeof vibe !== "string") {
     return res.status(400).json({ error: "Vibe description is required" });

@@ -4,7 +4,7 @@ type OpenAIImageResponse = {
 };
 
 export async function generateImageBuffer(prompt: string): Promise<Buffer> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
 
   if (!apiKey) {
     throw new Error(
@@ -12,7 +12,7 @@ export async function generateImageBuffer(prompt: string): Promise<Buffer> {
     );
   }
 
-  const model = process.env.OPENAI_IMAGE_MODEL ?? "gpt-image-1";
+  const model = process.env.OPENAI_IMAGE_MODEL?.trim() || "gpt-image-1";
 
   const response = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
@@ -25,10 +25,18 @@ export async function generateImageBuffer(prompt: string): Promise<Buffer> {
       prompt,
       n: 1,
       size: "1024x1024",
+      quality: "low",
     }),
   });
 
-  const body = (await response.json()) as OpenAIImageResponse;
+  const rawText = await response.text();
+  let body: OpenAIImageResponse;
+
+  try {
+    body = JSON.parse(rawText) as OpenAIImageResponse;
+  } catch {
+    throw new Error("OpenAI returned an invalid response. Try again.");
+  }
 
   if (!response.ok) {
     throw new Error(body.error?.message ?? "Image generation failed");
@@ -52,4 +60,20 @@ export async function generateImageBuffer(prompt: string): Promise<Buffer> {
   }
 
   throw new Error("No image returned from OpenAI");
+}
+
+export function parseJsonBody(body: unknown): Record<string, unknown> {
+  if (typeof body === "string") {
+    try {
+      return JSON.parse(body) as Record<string, unknown>;
+    } catch {
+      return {};
+    }
+  }
+
+  if (body && typeof body === "object") {
+    return body as Record<string, unknown>;
+  }
+
+  return {};
 }
