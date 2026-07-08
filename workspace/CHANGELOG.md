@@ -18,6 +18,9 @@ You MUST maintain this file to track your work across messages. This is NON-NEGO
 </instructions>
 
 <changelog>
+- 2026-07-08: Fixed desktop CHART/CTO/HOW TO BUY nav by replacing React Router hash Links with HashNavLink scroll handling.
+  - Files: src/components/HashNavLink.tsx, src/lib/scrollToHash.ts, src/pages/HomePage.tsx, src/sections/Header/components/DesktopNav.tsx
+  - Pattern: On home, scroll to section id; from other routes, navigate to / with hash then scroll on mount.
 - 2026-07-08: Fixed Vercel 404s by adding React Router routes for /meme and /pfp, SPA rewrites, and AI generator API routes.
   - Files: vercel.json, src/App.tsx, src/pages/*, api/generate-meme.ts, api/generate-pfp.ts, src/lib/generator.ts
   - Pattern: Client pages call /api/* serverless functions; set OPENAI_API_KEY in Vercel for image generation.

@@ -2,7 +2,7 @@ import { HowToBuyStep } from "@/sections/HowToBuy/components/HowToBuyStep";
 
 export const HowToBuy = () => {
   return (
-    <section id="how" className="box-border caret-transparent max-w-6xl outline-[3px] mx-auto px-4 py-16">
+    <section id="how" className="scroll-mt-20 box-border caret-transparent max-w-6xl outline-[3px] mx-auto px-4 py-16">
       <h2 className="text-4xl box-border caret-transparent tracking-[-0.36px] leading-10 outline-[3px] mb-6 font-bungee md:text-5xl md:tracking-[-0.48px] md:leading-[48px]">
         HOW TO BUY
       </h2>

@@ -33,7 +33,7 @@ export const LiveChart = () => {
   }, [loaded, embedUrl, PRIMARY_EMBED_URL, SECONDARY_EMBED_URL]);
 
   return (
-    <section id="chart" className="box-border caret-transparent max-w-6xl outline-[3px] mx-auto px-4 py-16">
+    <section id="chart" className="scroll-mt-20 box-border caret-transparent max-w-6xl outline-[3px] mx-auto px-4 py-16">
       <div className="items-end box-border caret-transparent gap-x-4 flex flex-wrap justify-between outline-[3px] gap-y-4 mb-6">
         <h2 className="text-4xl box-border caret-transparent tracking-[-0.36px] leading-10 min-h-[auto] min-w-[auto] outline-[3px] font-bungee md:text-5xl md:tracking-[-0.48px] md:leading-[48px]">
           LIVE CHART
