@@ -1,52 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-
-type OpenAIImageResponse = {
-  data?: Array<{ url?: string; b64_json?: string }>;
-  error?: { message?: string };
-};
-
-async function generateImage(prompt: string): Promise<string> {
-  const apiKey = process.env.OPENAI_API_KEY;
-
-  if (!apiKey) {
-    throw new Error(
-      "OPENAI_API_KEY is not set. Add it in your Vercel project settings.",
-    );
-  }
-
-  const response = await fetch("https://api.openai.com/v1/images/generations", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "dall-e-3",
-      prompt,
-      n: 1,
-      size: "1024x1024",
-      response_format: "b64_json",
-    }),
-  });
-
-  const body = (await response.json()) as OpenAIImageResponse;
-
-  if (!response.ok) {
-    throw new Error(body.error?.message ?? "Image generation failed");
-  }
-
-  const imageData = body.data?.[0];
-
-  if (imageData?.b64_json) {
-    return `data:image/png;base64,${imageData.b64_json}`;
-  }
-
-  if (imageData?.url) {
-    return imageData.url;
-  }
-
-  throw new Error("No image returned from OpenAI");
-}
+import { generateImage } from "./_utils/generateImage";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
